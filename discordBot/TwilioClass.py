@@ -35,4 +35,4 @@ class TwilioClient:
 
 # if __name__ == "__main__":
 #     twilio_client = TwilioClient()
-#     twilio_client.send_message("NEVER", "+18649348789")
+#     twilio_client.send_message("NEVER", "+")
