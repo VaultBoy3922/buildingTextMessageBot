@@ -9,7 +9,7 @@ from rich.traceback import install
 install(show_locals=True)
 
 
-class TwilioClient:
+class TwilioClass:
     def __init__(self):
         self.load_dotenv()
         self.client = self.get_twilio_client()

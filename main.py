@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from rich import print
 from rich.traceback import install
 
-from DiscordClass import MyClient
+from src.DiscordClass import MyClient
 
 install(show_locals=True)
 
