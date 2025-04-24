@@ -12,17 +12,17 @@ install(show_locals=True)
 class NocoClass:
     def __init__(self):
 
-        self.NOCODB_API_KEY = os.getenv("NOCODB_API_KEY")
-        self.SUBSCRIBER_NOCODB_TABLEID = os.getenv("SUBSCRIBER_NOCODB_TABLEID")
-        self.SUBSCRIBER_NOCODB_BASEID = os.getenv("SUBSCRIBER_NOCODB_BASEID")
-        self.NOCODB_URL = os.getenv("NOCODB_URL")
+        self.NOCODB_API_KEY = os.environ["NOCODB_API_KEY"]
+        self.SUBSCRIBER_NOCODB_TABLEID = os.environ["SUBSCRIBER_NOCODB_TABLEID"]
+        self.SUBSCRIBER_NOCODB_BASEID = os.environ["SUBSCRIBER_NOCODB_BASEID"]
+        self.NOCODB_URL = os.environ["NOCODB_URL"]
         self.tableid_url = (
             f"{self.NOCODB_URL}/api/v2/tables/{self.SUBSCRIBER_NOCODB_TABLEID}/records"
         )
         self.baseid_url = (
             f"{self.NOCODB_URL}/api/v2/meta/bases/{self.SUBSCRIBER_NOCODB_BASEID}/info"
         )
-        self.SUBSCRIBER_NOCODB_VIEWID = os.getenv("SUBSCRIBER_NOCODB_VIEWID")
+        self.SUBSCRIBER_NOCODB_VIEWID = os.environ["SUBSCRIBER_NOCODB_VIEWID"]
 
         self.authorize()
 
@@ -44,6 +44,7 @@ class NocoClass:
         # TODO: get subscribers from nocodb api and return them as a list/json
         self.subscriber_json = self.response.json()
         self.subscriber_list = self.subscriber_json["list"]
+        # print(self.subscriber_list)
 
     def add_subscriber(self, phone_number, name=None):
         self.phone_number = phone_number

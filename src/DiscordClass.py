@@ -18,11 +18,11 @@ NocoClass = NocoClass.NocoClass()
 class MyClient(discord.Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.envFile = None
+        # self.envFile = None
         self.load_dotenv()
-        self.TOKEN = os.getenv("DISCORD_TOKEN")
-        self.GUILD = os.getenv("DISCORD_GUILD")
-        self.DISCORD_BOT_ID = os.getenv("DISCORD_BOT_ID")
+        self.TOKEN = os.environ["DISCORD_TOKEN"]
+        self.GUILD = os.environ["DISCORD_GUILD"]
+        self.DISCORD_BOT_ID = os.environ["DISCORD_BOT_ID"]
 
     def load_dotenv(self):
         load_dotenv()
@@ -45,13 +45,16 @@ class MyClient(discord.Client):
 
     def __send_message_to_subscribers(self, message_content):
         self.message_content = message_content
+        NocoClass.authorize()
         print(f"Message content: {self.message_content}")
         self.message_content = self.message_content.replace(
             f"<@&{self.DISCORD_BOT_ID}> ", ""
         )
         print(f"Message content: {self.message_content}")
         for i in NocoClass.subscriber_list:
-            TwilioClass.send_message(body=message_content, to=f"+{i['PhoneNumber']}")
+            TwilioClass.send_message(
+                body=self.message_content, to=f"+{i['PhoneNumber']}"
+            )
             time.sleep(1)
 
     async def on_ready(self):
@@ -70,14 +73,13 @@ class MyClient(discord.Client):
         # print(message.channel.id)
         # print(self.message)
         self.message = message
-        self.ANNOUNCEMENT_CHANNEL_ID = os.getenv("ANNOUNCEMENT_CHANNEL_ID")
+        self.ANNOUNCEMENT_CHANNEL_ID = os.environ["ANNOUNCEMENT_CHANNEL_ID"]
 
         # print(f"Announcement channel id: {self.ANNOUNCEMENT_CHANNEL_ID}")
         # print(f"Channel id: {self.message.channel.id}")
         # print(f"Message mentions: {self.message.content.mentions}")
         # print(self.message.content)
         # Ignore messages from the bot itself
-        print(message.content)
 
         if self.message.author == self.user:
             print("Message from bot")
@@ -89,7 +91,7 @@ class MyClient(discord.Client):
         channel_id_check = self.__check_channel_id(
             message.channel.id, self.ANNOUNCEMENT_CHANNEL_ID
         )
-        print(f"Channel id check: {channel_id_check}")
+        # print(f"Channel id check: {channel_id_check}")
         # Check if the bot is mentioned
         check_if_mentioned = self.__check_if_mentioned(message.content)
         print(f"Check if mentioned: {check_if_mentioned}")

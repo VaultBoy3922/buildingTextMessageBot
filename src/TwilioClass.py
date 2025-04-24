@@ -15,14 +15,14 @@ class TwilioClient:
     def __init__(self):
         self.load_dotenv()
         self.client = self.get_twilio_client()
-        self.TWILIO_PHONE_NUMBER = os.getenv("TWILIO_PHONE_NUMBER")
+        self.TWILIO_PHONE_NUMBER = os.environ["TWILIO_PHONE_NUMBER"]
 
     def load_dotenv(self):
         load_dotenv()
 
     def get_twilio_client(self):
-        self.TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
-        self.TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+        self.TWILIO_ACCOUNT_SID = os.environ["TWILIO_ACCOUNT_SID"]
+        self.TWILIO_AUTH_TOKEN = os.environ["TWILIO_AUTH_TOKEN"]
         self.client = Client(self.TWILIO_ACCOUNT_SID, self.TWILIO_AUTH_TOKEN)
         return self.client
 

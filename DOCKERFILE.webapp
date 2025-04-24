@@ -1,0 +1,17 @@
+FROM python:3.13
+
+WORKDIR /app
+
+ADD src/DiscordClass.py .
+ADD src/FlaskClass.py .
+ADD src/main.py .
+ADD src/NocoClass.py .
+ADD src/TwilioClass.py .
+ADD src/wsgi.py .
+
+RUN pip install flask twilio dotenv rich requests discord uwsgi
+
+EXPOSE 80
+# CMD ["python", "src/main.py"]
+# CMD ["uwsgi", "--http", ":80", "--wsgi-file", "wsgi.py"]
+CMD ["uwsgi", "--socket", "0.0.0.0:80", "--protocol=http", "-w", "wsgi:app"]
