@@ -36,13 +36,20 @@ def sms_reply():
 
     if body == "updates" or body == "update" or body == "Updates" or body == "Update":
         sender_phone_number = request.values.get("From", None)
+        subscriber_status = nocodb.check_if_subscribed(sender_phone_number)
+        print(f"Subscriber status: {subscriber_status}")
         sender_phone_number.replace("+", "")
         int(sender_phone_number)
-        nocodb.add_subscriber(sender_phone_number)
-        # TODO: Make message not hardcoded so its easier to change in the future
-        resp.message(
-            "Welcome to one of the best text message thread you will ever be a part of. You have opted in to get text message updates for the Kingdom Outpost. We can’t wait to share more with you about what God is doing. If at any point you wish to stop reciving these updates, simply reply 'stop'.Msg&Data Rates May Apply."
-        )
+        if subscriber_status:
+            resp.message(
+                "You are already subscribed to updates. If you wish to stop reciving these updates, simply reply 'stop'."
+            )
+        else:
+            nocodb.add_subscriber(sender_phone_number)
+            # TODO: Make message not hardcoded so its easier to change in the future
+            resp.message(
+                "Welcome to one of the best text message thread you will ever be a part of. You have opted in to get text message updates for the Kingdom Outpost. We can’t wait to share more with you about what God is doing. If at any point you wish to stop reciving these updates, simply reply 'stop'.Msg&Data Rates May Apply."
+            )
 
         # TODO: check if they are already in the list
 

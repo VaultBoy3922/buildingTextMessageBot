@@ -3,6 +3,7 @@ import subprocess
 
 import discord
 from dotenv import load_dotenv
+
 from rich import print
 from rich.traceback import install
 
@@ -17,7 +18,10 @@ def main():
     # subprocess.run(["shell", "uwsgi --socket 0.0.0.0:80 --protocol=http wsgi:app"])
 
     # Start the Discord bot
+    print("Starting Discord bot...")
     client = MyClient(intents=discord.Intents.all())
+    print("Discord bot started.")
+    print("Running Discord bot...")
     client.run(client.TOKEN)
 
 

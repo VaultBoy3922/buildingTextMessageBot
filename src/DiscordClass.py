@@ -3,6 +3,7 @@ import time
 
 import discord
 from dotenv import load_dotenv
+
 from rich import print
 from rich.traceback import install
 
@@ -29,6 +30,7 @@ class MyClient(discord.Client):
 
     def __check_if_mentioned(self, message):
         self.discord_message = message
+        print(f"Discord message: {self.discord_message}")
         self.id_to_check = f"<@&{self.DISCORD_BOT_ID}>"
         if self.id_to_check in self.discord_message:
             return True
@@ -43,7 +45,7 @@ class MyClient(discord.Client):
         else:
             return False
 
-    def __send_message_to_subscribers(self, message_content):
+    def __send_message_to_subscribers(self, message_content, group=None):
         self.message_content = message_content
         NocoClass.authorize()
         print(f"Message content: {self.message_content}")
@@ -51,11 +53,22 @@ class MyClient(discord.Client):
             f"<@&{self.DISCORD_BOT_ID}> ", ""
         )
         print(f"Message content: {self.message_content}")
-        for i in NocoClass.subscriber_list:
-            TwilioClass.send_message(
-                body=self.message_content, to=f"+{i['PhoneNumber']}"
-            )
-            time.sleep(1)
+        if group == "worship":
+            print(f"Group: {group}")
+            for i in NocoClass.subscriber_list:
+                print(f"Subscriber: {i}")
+                if "Worship" in i["Updates Group"]:
+                    print(f"Sending message to {i['PhoneNumber']}")
+                    TwilioClass.send_message(
+                        body=self.message_content, to=f"+{i['PhoneNumber']}"
+                    )
+                    time.sleep(1)
+        else:
+            for i in NocoClass.subscriber_list:
+                TwilioClass.send_message(
+                    body=self.message_content, to=f"+{i['PhoneNumber']}"
+                )
+                time.sleep(1)
 
     async def on_ready(self):
         guild = discord.utils.get(self.guilds, name=self.GUILD)
@@ -74,6 +87,7 @@ class MyClient(discord.Client):
         # print(self.message)
         self.message = message
         self.ANNOUNCEMENT_CHANNEL_ID = os.environ["ANNOUNCEMENT_CHANNEL_ID"]
+        self.WORSHIP_CHANNEL_ID = os.environ["WORSHIP_CHANNEL_ID"]
 
         # print(f"Announcement channel id: {self.ANNOUNCEMENT_CHANNEL_ID}")
         # print(f"Channel id: {self.message.channel.id}")
@@ -101,6 +115,14 @@ class MyClient(discord.Client):
             if self.__check_if_mentioned(message.content):
                 print(f"check for mention")
                 self.__send_message_to_subscribers(message.content)
+            else:
+                print("Not a mention")
+                return
+        elif self.__check_channel_id(message.channel.id, self.WORSHIP_CHANNEL_ID):
+            print(f"check for channel id")
+            if self.__check_if_mentioned(message.content):
+                print(f"check for mention")
+                self.__send_message_to_subscribers(message.content, group="worship")
             else:
                 print("Not a mention")
                 return

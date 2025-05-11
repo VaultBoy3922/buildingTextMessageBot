@@ -27,7 +27,6 @@ class NocoClass:
         self.authorize()
 
     def authorize(self):
-        # TODO: add authorization to nocodb api
         self.querystring = {
             "offset": "0",
             "limit": "25",
@@ -41,9 +40,13 @@ class NocoClass:
         self.get_subscribers()
 
     def get_subscribers(self):
-        # TODO: get subscribers from nocodb api and return them as a list/json
         self.subscriber_json = self.response.json()
         self.subscriber_list = self.subscriber_json["list"]
+
+    # def get_subscriber_from_group(self, group):
+    #     self.group = group
+    #     self.get_subscribers()
+        
         # print(self.subscriber_list)
 
     def add_subscriber(self, phone_number, name=None):
@@ -80,6 +83,18 @@ class NocoClass:
             params=self.querystring,
             data=self.schema,
         )
+    def check_if_subscribed(self, subscriber_number):
+        self.subscriber_number = subscriber_number
+        self.authorize()
+        self.result = bool
+        for i in self.subscriber_list:
+            if f"+{i["PhoneNumber"]}" == self.subscriber_number:
+                self.result = True
+                break
+            else:
+                self.result = False
+        return self.result
+        
 
 
 # if __name__ == "__main__":
