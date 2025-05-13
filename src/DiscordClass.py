@@ -9,11 +9,13 @@ from rich.traceback import install
 
 import TwilioClass
 import NocoClass
+from config import load_discord_bot_config
 
 
 install(show_locals=True)
 TwilioClass = TwilioClass.TwilioClient()
 NocoClass = NocoClass.NocoClass()
+config_data = load_discord_bot_config()
 
 
 class MyClient(discord.Client):
@@ -21,9 +23,12 @@ class MyClient(discord.Client):
         super().__init__(*args, **kwargs)
         # self.envFile = None
         self.load_dotenv()
-        self.TOKEN = os.environ["DISCORD_TOKEN"]
-        self.GUILD = os.environ["DISCORD_GUILD"]
-        self.DISCORD_BOT_ID = os.environ["DISCORD_BOT_ID"]
+        self.bot_token = config_data.bot_token
+        self.guild = config_data.guild
+        self.bot_id = config_data.bot_id
+        # self.TOKEN = os.environ["DISCORD_TOKEN"]
+        # self.GUILD = os.environ["DISCORD_GUILD"]
+        # self.DISCORD_BOT_ID = os.environ["DISCORD_BOT_ID"]
 
     def load_dotenv(self):
         load_dotenv()
@@ -31,7 +36,7 @@ class MyClient(discord.Client):
     def __check_if_mentioned(self, message):
         self.discord_message = message
         print(f"Discord message: {self.discord_message}")
-        self.id_to_check = f"<@&{self.DISCORD_BOT_ID}>"
+        self.id_to_check = f"<@&{self.bot_id}>"
         if self.id_to_check in self.discord_message:
             return True
         else:
@@ -49,9 +54,7 @@ class MyClient(discord.Client):
         self.message_content = message_content
         NocoClass.authorize()
         print(f"Message content: {self.message_content}")
-        self.message_content = self.message_content.replace(
-            f"<@&{self.DISCORD_BOT_ID}> ", ""
-        )
+        self.message_content = self.message_content.replace(f"<@&{self.bot_id}> ", "")
         print(f"Message content: {self.message_content}")
         if group == "worship":
             print(f"Group: {group}")
@@ -71,7 +74,7 @@ class MyClient(discord.Client):
                 time.sleep(1)
 
     async def on_ready(self):
-        guild = discord.utils.get(self.guilds, name=self.GUILD)
+        guild = discord.utils.get(self.guilds, name=self.guild)
         print(
             f"Logged in as {self.user} in the following guild:\n"
             f"{guild.name}(id: {guild.id})\n"
@@ -80,6 +83,8 @@ class MyClient(discord.Client):
 
     # This event triggers when a message is sent in the Announcements channel
     # and the bot is mentioned
+    # TODO: rewrite this to use the new config for update groups. Will need to search the TextKeywords group for the values it looks for now
+    # TODO: add a check to see if bot needs to add text infront of the message to indicate which group it comes from
     async def on_message(self, message):
 
         # print(f"Message from {message.author}: {message.content}")
