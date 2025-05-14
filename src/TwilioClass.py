@@ -3,7 +3,6 @@ import os
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.rest import Client
-from dotenv import load_dotenv
 from rich import print
 
 from rich.traceback import install
@@ -15,13 +14,9 @@ twilio_config = load_twilio_config()
 
 class TwilioClient:
     def __init__(self):
-        self.load_dotenv()
         self.client = self.get_twilio_client()
         self.twilio_phone_number = twilio_config.twilio_phone_number
         # self.TWILIO_PHONE_NUMBER = os.environ["TWILIO_PHONE_NUMBER"]
-
-    def load_dotenv(self):
-        load_dotenv()
 
     def get_twilio_client(self):
         self.twilio_account_sid = twilio_config.twilio_account_sid

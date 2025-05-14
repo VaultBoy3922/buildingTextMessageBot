@@ -2,7 +2,6 @@ import os
 import subprocess
 
 import discord
-from dotenv import load_dotenv
 
 from rich import print
 from rich.traceback import install

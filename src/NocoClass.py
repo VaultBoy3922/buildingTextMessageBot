@@ -88,17 +88,18 @@ class NocoClass:
         for i in self.subscriber_list:
             if i["PhoneNumber"] == int(self.subscriber_number):
                 self.id_number = i["Id"]
+                self.schema = {"Id": int(self.id_number)}
+                self.delete_response = requests.request(
+                    "DELETE",
+                    self.tableid_url,
+                    headers=self.headers,
+                    params=self.querystring,
+                    data=self.schema,
+                )
                 break
             else:
                 pass
-        self.schema = {"Id": int(self.id_number)}
-        self.delete_response = requests.request(
-            "DELETE",
-            self.tableid_url,
-            headers=self.headers,
-            params=self.querystring,
-            data=self.schema,
-        )
+
     def check_if_subscribed(self, subscriber_number, group_to_check):
         self.subscriber_number = subscriber_number
         self.group_to_check = group_to_check

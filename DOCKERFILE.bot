@@ -1,12 +1,10 @@
-FROM python:3.13
+FROM python:3.13-alpine
 
 ADD src/DiscordClass.py .
-ADD src/FlaskClass.py .
 ADD src/main.py .
 ADD src/NocoClass.py .
 ADD src/TwilioClass.py .
-ADD src/wsgi.py .
-RUN pip install flask twilio dotenv rich requests discord uwsgi
+ADD src/config.py .
+RUN pip install twilio rich requests discord pyyaml typing pydantic
 
 CMD ["python", "main.py"]
-# CMD ["python", "uwsgi --socket 0.0.0.0:80 --protocol=http -w wsgi:app  "]

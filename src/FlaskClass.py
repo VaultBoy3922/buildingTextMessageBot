@@ -1,6 +1,5 @@
 import os
 
-import dotenv
 from flask import Flask, request, redirect
 from rich import print
 from rich.traceback import install

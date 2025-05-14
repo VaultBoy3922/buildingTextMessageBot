@@ -2,7 +2,6 @@ import os
 import time
 
 import discord
-from dotenv import load_dotenv
 
 from rich import print
 from rich.traceback import install
@@ -23,16 +22,12 @@ class MyClient(discord.Client):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # self.envFile = None
-        self.load_dotenv()
         self.bot_token = config_data.bot_token
         self.guild = config_data.guild
         self.bot_id = config_data.bot_id
         # self.TOKEN = os.environ["DISCORD_TOKEN"]
         # self.GUILD = os.environ["DISCORD_GUILD"]
         # self.DISCORD_BOT_ID = os.environ["DISCORD_BOT_ID"]
-
-    def load_dotenv(self):
-        load_dotenv()
 
     def __check_if_mentioned(self, message):
         self.discord_message = message
