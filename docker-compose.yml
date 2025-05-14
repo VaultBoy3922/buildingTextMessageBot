@@ -1,12 +1,12 @@
 services:
     uwsgiBotApp:
-        image: vaultboy3922/webapp:latest
+        image: vaultboy3922/webapp:0.3b1
         ports:
             - "80:80"
         volumes:
             - ./config.yml:./config.yml
 
     discordBot:
-        image: vaultboy3922/bot:latest
+        image: vaultboy3922/bot:0.3b1
         volumes:
             - ./config.yml:./config.yml

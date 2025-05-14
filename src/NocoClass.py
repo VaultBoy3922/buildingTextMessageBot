@@ -62,7 +62,7 @@ class NocoClass:
     #     self.get_subscribers()
         
         # print(self.subscriber_list)
-
+#TODO: add check if subscriber is already in the list, if so the subscriber group will need to be formatted to include current groups
     def add_subscriber(self, phone_number, group, name=None):
         self.phone_number = phone_number
         self.name = name
