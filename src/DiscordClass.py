@@ -93,5 +93,6 @@ class MyClient(discord.Client):
                 self.__send_message_to_subscribers(
                     self.message.content, group=group_data.nocodb_tag
                 )
+                break
             else:
                 print("Message is not in a update group channel")

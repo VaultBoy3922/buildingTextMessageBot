@@ -12,7 +12,9 @@ from pydantic import BaseModel, Field
 install(show_locals=True)
 
 
-# cwd = os.getcwd()
+cwd = os.getcwd()
+
+
 # print(f"Current working directory: {cwd}")
 class TwilioConfig(BaseModel):
     twilio_account_sid: str
@@ -47,7 +49,7 @@ class TextKeywords(BaseModel):
 
 
 def read_config():
-    with open(f"src/config.yml", "r") as file:
+    with open(f"{cwd}/config.yml", "r") as file:
         config_data = yaml.safe_load(file)
     return config_data
 

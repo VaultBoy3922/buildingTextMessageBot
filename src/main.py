@@ -21,7 +21,7 @@ def main():
     client = MyClient(intents=discord.Intents.all())
     print("Discord bot started.")
     print("Running Discord bot...")
-    client.run(client.TOKEN)
+    client.run(client.bot_token)
 
 
 if __name__ == "__main__":

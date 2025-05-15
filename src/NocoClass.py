@@ -1,7 +1,6 @@
 import os
 from datetime import datetime
 
-import dotenv
 import requests
 from rich import print
 from rich.traceback import install
@@ -77,7 +76,7 @@ class NocoClass:
         self.name = name
         self.group = group
         # TODO: decide if its worth it to hardcode the subscriber schema or create variable for all these options
-        if self.__check_if_subscriber_exists(self, self.phone_number):
+        if self.__check_if_subscriber_exists(self.phone_number):
             self.update_subscriber(
                 subscriber_number=self.phone_number,
                 field=self.subscriber_type_column,
@@ -100,21 +99,22 @@ class NocoClass:
             )
 
     def remove_subscriber(self, subscriber_number):
+        self.authorize()
         self.subscriber_number = subscriber_number
         for i in self.subscriber_list:
             if i["PhoneNumber"] == int(self.subscriber_number):
                 self.id_number = i["Id"]
-                self.schema = {"Id": int(self.id_number)}
-                self.delete_response = requests.request(
-                    "DELETE",
-                    self.tableid_url,
-                    headers=self.headers,
-                    params=self.querystring,
-                    data=self.schema,
-                )
                 break
             else:
                 pass
+        self.schema = {"Id": int(self.id_number)}
+        self.delete_response = requests.request(
+            "DELETE",
+            self.tableid_url,
+            headers=self.headers,
+            params=self.querystring,
+            data=self.schema,
+        )
 
     def check_if_subscribed(self, subscriber_number, group_to_check):
         self.subscriber_number = subscriber_number
@@ -131,6 +131,7 @@ class NocoClass:
         return self.result
 
     def update_subscriber(self, subscriber_number, field, value):
+        self.authorize()
         self.subscriber_number = subscriber_number
         self.field = field
         self.value = value
@@ -150,13 +151,3 @@ class NocoClass:
                     data=self.schema,
                 )
                 print(self.patch_response.text)
-
-
-if __name__ == "__main__":
-    # Test the NocoClass
-
-    NocoClass = NocoClass()
-    NocoClass.authorize()
-    NocoClass.update_subscriber(
-        subscriber_number="+18649580133", field="Updates Group", value="MensGroup"
-    )

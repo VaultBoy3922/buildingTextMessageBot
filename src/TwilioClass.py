@@ -1,6 +1,5 @@
 import os
 
-from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
 from twilio.rest import Client
 from rich import print
@@ -31,7 +30,7 @@ class TwilioClient:
         self.body = str(body)
         self.to = f"+{to}"
         self.message = self.client.messages.create(
-            body=self.body, from_=f"{self.TWILIO_PHONE_NUMBER}", to=f"{self.to}"
+            body=self.body, from_=f"{self.twilio_phone_number}", to=f"{self.to}"
         )
         print(self.message)
 
