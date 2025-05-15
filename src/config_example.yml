@@ -1,0 +1,37 @@
+discord_bot_config:
+  guild:
+  bot_token:
+  bot_id:
+
+twilio_config:
+  twilio_account_sid:
+  twilio_auth_token:
+  twilio_phone_number:
+
+nocodb_config:
+  api_key:
+  url:
+  subscriber_tableid:
+  subscriber_baseid:
+  subscriber_viewid:
+  subscriber_type_column:
+
+# This is where you setup the types of text updates. This is the format
+# text_update_groups:
+#   (text_keyword_to_look_for):
+#     discord_channel: text_name_of_channel
+#     discord_channel_id: channel_id_of_channel
+#     nocodb_tag: tag_for_group_type # checks column defined as subscriber_type_column
+#     sign_up_via_text: (bool value)
+
+text_update_groups:
+  updates:
+    discord_channel: "example Name"
+    discord_channel_id: 1234
+    nocodb_tag: "example tag"
+    sign_up_via_text: True or False
+  worship:
+    discord_channel: "example Name"
+    discord_channel_id: 12345
+    nocodb_tag: "example Tag"
+    sign_up_via_text: True or False
