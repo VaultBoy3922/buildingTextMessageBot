@@ -12,6 +12,7 @@ from config import load_nocodb_data
 install(show_locals=True)
 config_data = load_nocodb_data()
 
+
 class NocoClass:
     def __init__(self):
         self.api_key = config_data.api_key
@@ -20,12 +21,8 @@ class NocoClass:
         self.subscriber_baseid = config_data.subscriber_baseid
         self.subscriber_viewid = config_data.subscriber_viewid
         self.subscriber_type_column = config_data.subscriber_type_column
-        self.tableid_url = (
-            f"{self.url}/api/v2/tables/{self.subscriber_tabelid}/records"
-        )
-        self.baseid_url = (
-            f"{self.url}/api/v2/meta/bases/{self.subscriber_baseid}/info"
-        ) 
+        self.tableid_url = f"{self.url}/api/v2/tables/{self.subscriber_tabelid}/records"
+        self.baseid_url = f"{self.url}/api/v2/meta/bases/{self.subscriber_baseid}/info"
         # self.NOCODB_API_KEY = os.environ["NOCODB_API_KEY"]
         # self.SUBSCRIBER_NOCODB_TABLEID = os.environ["SUBSCRIBER_NOCODB_TABLEID"]
         # self.SUBSCRIBER_NOCODB_BASEID = os.environ["SUBSCRIBER_NOCODB_BASEID"]
@@ -38,7 +35,19 @@ class NocoClass:
         # )
         # self.SUBSCRIBER_NOCODB_VIEWID = os.environ["SUBSCRIBER_NOCODB_VIEWID"]
 
+        # self.authorize()
+
+    def __check_if_subscriber_exists(self, subscriber_number):
+        self.subscriber_number = subscriber_number
         self.authorize()
+        result = bool
+        for i in self.subscriber_list:
+            if f"+{i['PhoneNumber']}" == self.subscriber_number:
+                result = True
+                break
+            else:
+                result = False
+        return result
 
     def authorize(self):
         self.querystring = {
@@ -51,37 +60,44 @@ class NocoClass:
         self.response = requests.request(
             "GET", self.tableid_url, headers=self.headers, params=self.querystring
         )
-        self.get_subscribers()
+        return self.get_subscribers()
 
     def get_subscribers(self):
         self.subscriber_json = self.response.json()
         self.subscriber_list = self.subscriber_json["list"]
+        return self.subscriber_list
 
     # def get_subscriber_from_group(self, group):
     #     self.group = group
     #     self.get_subscribers()
-        
-        # print(self.subscriber_list)
-#TODO: add check if subscriber is already in the list, if so the subscriber group will need to be formatted to include current groups
+
+    # print(self.subscriber_list)
     def add_subscriber(self, phone_number, group, name=None):
         self.phone_number = phone_number
         self.name = name
         self.group = group
-#TODO: decide if its worth it to hardcode the subscriber schema or create variable for all these options
-        self.schema = {
-            "Name": f"{self.name}",
-            "PhoneNumber": int(self.phone_number),
-            "DateSubscribed": f"{datetime.today().strftime('%Y-%m-%d')}",
-            "Subscribed": "true",
-            f"{self.subscriber_type_column}": f"{group}"
-        }
-        self.put_response = requests.request(
-            "POST",
-            self.tableid_url,
-            headers=self.headers,
-            params=self.querystring,
-            data=self.schema,
-        )
+        # TODO: decide if its worth it to hardcode the subscriber schema or create variable for all these options
+        if self.__check_if_subscriber_exists(self, self.phone_number):
+            self.update_subscriber(
+                subscriber_number=self.phone_number,
+                field=self.subscriber_type_column,
+                value=group,
+            )
+        else:
+            self.schema = {
+                "Name": f"{self.name}",
+                "PhoneNumber": int(self.phone_number),
+                "DateSubscribed": f"{datetime.today().strftime('%Y-%m-%d')}",
+                "Subscribed": "true",
+                f"{self.subscriber_type_column}": f"{group}",
+            }
+            self.put_response = requests.request(
+                "POST",
+                self.tableid_url,
+                headers=self.headers,
+                params=self.querystring,
+                data=self.schema,
+            )
 
     def remove_subscriber(self, subscriber_number):
         self.subscriber_number = subscriber_number
@@ -106,18 +122,41 @@ class NocoClass:
         self.authorize()
         self.result = bool
         for i in self.subscriber_list:
-            if f"+{i["PhoneNumber"]}" == self.subscriber_number:
+            if f"+{i['PhoneNumber']}" == self.subscriber_number:
                 if i[f"{self.subscriber_type_column}"] == self.group_to_check:
                     self.result = True
                     break
             else:
                 self.result = False
         return self.result
-        
+
+    def update_subscriber(self, subscriber_number, field, value):
+        self.subscriber_number = subscriber_number
+        self.field = field
+        self.value = value
+        for i in self.subscriber_list:
+            if i["PhoneNumber"] == int(self.subscriber_number):
+                self.id_number = i["Id"]
+                self.schema = i[f"{self.field}"]
+                self.schema = {
+                    "Id": int(self.id_number),
+                    f"{self.field}": f"{i[self.field]},{self.value}",
+                }
+                self.patch_response = requests.request(
+                    "PATCH",
+                    self.tableid_url,
+                    headers=self.headers,
+                    params=self.querystring,
+                    data=self.schema,
+                )
+                print(self.patch_response.text)
 
 
-# if __name__ == "__main__":
-#     # Test the NocoClass
-#     dotenv.load_dotenv()
-#     NocoClass = NocoClass()
-#     NocoClass.remove_subscriber(subscriber_number="5555555555")
+if __name__ == "__main__":
+    # Test the NocoClass
+
+    NocoClass = NocoClass()
+    NocoClass.authorize()
+    NocoClass.update_subscriber(
+        subscriber_number="+18649580133", field="Updates Group", value="MensGroup"
+    )
